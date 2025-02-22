@@ -32,11 +32,14 @@ pub struct DrawLayer {
 }
 
 impl DrawLayer {
-    pub unsafe fn new<F>(mut loader: F)
+    pub unsafe fn new<F>(mut loader: F) -> Self
     where
         F: FnMut(&'static str) -> *const (),
     {
         gl::load_with(|s| loader(s) as *const c_void);
+        Self {
+            vao_bound: Cell::new(false),
+        }
     }
 
     pub fn clear(&self, flags: impl Into<u32>) {

@@ -1,5 +1,7 @@
 use std::{ffi::c_void, mem::MaybeUninit, ptr};
 
+use super::Vao;
+
 pub struct Vbo(u32);
 
 #[repr(u32)]
@@ -35,7 +37,8 @@ pub enum DrawUsage {
 
 #[allow(unused)]
 impl Vbo {
-    pub fn new() -> Self {
+    pub fn new(vao: &Vao) -> Self {
+        unsafe { vao.bind() };
         let mut id: MaybeUninit<u32> = MaybeUninit::uninit();
         unsafe { gl::GenBuffers(1, id.as_mut_ptr()) };
         let id = unsafe { id.assume_init() };
