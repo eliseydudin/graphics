@@ -1,7 +1,7 @@
-pub mod attribute;
-pub mod buffers;
-pub mod color;
-pub mod draw_layer;
-pub mod shader;
+mod attribute;
+mod buffers;
+mod color;
+mod draw_layer;
+mod shader;
 
 pub use {attribute::*, buffers::*, color::*, draw_layer::*, shader::*};

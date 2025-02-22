@@ -1,4 +1,4 @@
-use graphics::{AttributeType, ClearFlags, Color, DrawMode, Program, Shader, Vao, Vbo};
+use graphics::{attributes, ClearFlags, Color, DrawMode, Program, Shader, Vao, Vbo};
 use sdl2::event::Event;
 
 const VERTEX_SOURCE: &'static str = r#"
@@ -60,23 +60,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let fragment = Shader::compile(&FRAGMENT_SOURCE)?;
     let program = Program::new(vertex, fragment)?;
 
-    let position = program
-        .get_attribute("position")
-        .ok_or("No attribute 'position'")?;
-    position.enable();
-    position.memory_layout(2, AttributeType::Float, false, 5 * size_of::<f32>(), 0);
-
-    let color = program
-        .get_attribute("color")
-        .ok_or("No attribute 'color'")?;
-    color.enable();
-    color.memory_layout(
-        3,
-        AttributeType::Float,
-        false,
-        5 * size_of::<f32>(),
-        2 * size_of::<f32>(),
-    );
+    let attrs = attributes! {
+        position: vec<f32, 2>,
+        color: vec<f32, 3>
+    };
+    attrs
+        .calculate_for(&program)
+        .ok_or("Failed describing memory layout")?;
 
     draw_layer.use_program(&program);
     draw_layer.bind(&vao);
