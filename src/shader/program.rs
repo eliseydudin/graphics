@@ -1,6 +1,8 @@
+use crate::Attribute;
+
 use super::{Fragment, Shader, ShaderError, Vertex};
 use std::{
-    ffi::{c_char, CStr},
+    ffi::{c_char, CStr, CString},
     ptr,
 };
 
@@ -47,6 +49,24 @@ impl Program {
         gl::GetProgramiv(id, gl::COMPILE_STATUS, ptr::addr_of_mut!(success));
 
         success != 0
+    }
+
+    pub fn get_attribute(&self, position: &str) -> Option<Attribute> {
+        let id = unsafe { self.get_attribute_id(position) }?;
+
+        if id == -1 {
+            return None;
+        }
+
+        Some(Attribute::at_pos(id as u32))
+    }
+
+    unsafe fn get_attribute_id(&self, position: &str) -> Option<i32> {
+        let cstr = CString::new(position).ok()?;
+        let cstr = cstr.as_ptr();
+
+        let attribute_id = unsafe { gl::GetAttribLocation(self.0, cstr) };
+        Some(attribute_id)
     }
 }
 
