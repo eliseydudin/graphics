@@ -13,8 +13,8 @@ impl Vao {
         Self(id)
     }
 
-    pub fn bind(&self) {
-        unsafe { gl::BindVertexArray(self.0) }
+    pub unsafe fn bind(&self) {
+        gl::BindVertexArray(self.0)
     }
 }
 
