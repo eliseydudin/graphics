@@ -60,27 +60,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let fragment = Shader::compile(&FRAGMENT_SOURCE)?;
     let program = Program::new(vertex, fragment)?;
 
-    match program.get_attribute("position") {
-        Some(attr) => {
-            attr.enable();
-            attr.memory_layout(2, AttributeType::Float, false, 5 * size_of::<f32>(), 0);
-        }
-        None => (),
-    };
+    let position = program
+        .get_attribute("position")
+        .ok_or("No attribute 'position'")?;
+    position.enable();
+    position.memory_layout(2, AttributeType::Float, false, 5 * size_of::<f32>(), 0);
 
-    match program.get_attribute("color") {
-        Some(attr) => {
-            attr.enable();
-            attr.memory_layout(
-                3,
-                AttributeType::Float,
-                false,
-                5 * size_of::<f32>(),
-                2 * size_of::<f32>(),
-            );
-        }
-        None => (),
-    };
+    let color = program
+        .get_attribute("color")
+        .ok_or("No attribute 'color'")?;
+    color.enable();
+    color.memory_layout(
+        3,
+        AttributeType::Float,
+        false,
+        5 * size_of::<f32>(),
+        2 * size_of::<f32>(),
+    );
 
     draw_layer.use_program(&program);
     draw_layer.bind(&vao);
