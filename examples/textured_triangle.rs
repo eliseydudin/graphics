@@ -2,7 +2,7 @@ use graphics::{
     attributes, ActiveTexture, ClearFlags, Color, DrawMode, Program, Shader, Texture, Vao, Vbo,
 };
 use image::{EncodableLayout, ImageReader};
-use sdl2::event::Event;
+use sdl2::event::{Event, WindowEvent};
 
 const VERTEX_SOURCE: &'static str = r#"
 #version 330 core
@@ -107,6 +107,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } => break 'main_loop,
+                Event::Window { win_event, .. } => {
+                    if let WindowEvent::Resized(w, h) = win_event {
+                        draw_layer.resize_to(w, h);
+                    }
+                }
                 _ => (),
             }
         }
