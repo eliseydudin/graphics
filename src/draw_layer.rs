@@ -27,9 +27,9 @@ impl ops::BitOr for ClearFlags {
 pub struct DrawLayer;
 
 impl DrawLayer {
-    pub unsafe fn new<F>(mut loader: F) -> Self
+    pub unsafe fn new<T, F>(mut loader: F) -> Self
     where
-        F: FnMut(&'static str) -> *const (),
+        F: FnMut(&'static str) -> *const T,
     {
         gl::load_with(|s| loader(s) as *const c_void);
         Self
