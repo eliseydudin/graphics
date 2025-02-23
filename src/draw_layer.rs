@@ -68,6 +68,20 @@ pub trait UniformResource {
     unsafe fn uniform(&self, location: i32);
 }
 
+impl UniformResource for u32 {
+    #[inline]
+    unsafe fn uniform(&self, location: i32) {
+        gl::Uniform1ui(location, *self)
+    }
+}
+
+impl UniformResource for f32 {
+    #[inline]
+    unsafe fn uniform(&self, location: i32) {
+        gl::Uniform1f(location, *self)
+    }
+}
+
 impl DrawLayer {
     /// Returns [`None`] when `location` is an invalid string
     /// or if location isn't a uniform inside the shader.
