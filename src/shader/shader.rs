@@ -40,7 +40,7 @@ pub struct Shader<S: AsShaderType> {
 
 impl<S: AsShaderType> Shader<S> {
     pub fn compile(source: &str) -> Result<Self, ShaderError> {
-        let cstr = CString::new(source).map_err(|e| ShaderError::CStringConversion(e))?;
+        let cstr = CString::new(source).map_err(ShaderError::CStringConversion)?;
         let ptr = cstr.as_ptr();
 
         let id = unsafe { Self::compile_internal(ptr) }?;

@@ -101,34 +101,49 @@ impl Attributes {
     }
 
     pub fn calculate_for(self, program: &Program) -> Option<()> {
-        let mut stride = 0;
-        for attr in &self.attrs {
-            stride += attr.vector_size * attr.mem_size as i32;
-        }
+        let stride: i32 = self
+            .attrs
+            .iter()
+            .map(|attr| attr.mem_size as i32 * attr.vector_size)
+            .sum();
 
-        {
-            let first_attr = &self.attrs[0];
-
-            let attr = program.get_attribute(&first_attr.name)?;
-            attr.enable();
-            attr.memory_layout(
-                first_attr.vector_size,
-                first_attr.mem_type,
-                false,
-                stride,
-                0,
-            );
-        }
+        self.calculate_one_attribute(program, &self.attrs[0], stride, 0)?;
 
         let mut offset = 0;
-        for attr_pair in self.attrs.windows(2) {
-            offset += attr_pair[0].mem_size * attr_pair[0].vector_size as usize;
 
-            let second = &attr_pair[1];
-            let attr = program.get_attribute(second.name)?;
-            attr.enable();
-            attr.memory_layout(second.vector_size, second.mem_type, false, stride, offset);
+        let errors: Vec<Option<()>> = self
+            .attrs
+            .windows(2)
+            .map(|attr_pair| {
+                offset += attr_pair[0].mem_size * attr_pair[0].vector_size as usize;
+                let descriptor = &attr_pair[1];
+                self.calculate_one_attribute(program, descriptor, stride, offset)
+            })
+            .collect();
+
+        for error in errors {
+            error?;
         }
+
+        Some(())
+    }
+
+    fn calculate_one_attribute(
+        &self,
+        program: &Program,
+        descriptor: &AttributeDescriptor,
+        stride: i32,
+        offset: usize,
+    ) -> Option<()> {
+        let attr = program.get_attribute(descriptor.name)?;
+        attr.enable();
+        attr.memory_layout(
+            descriptor.vector_size,
+            descriptor.mem_type,
+            false,
+            stride,
+            offset,
+        );
 
         Some(())
     }

@@ -18,6 +18,12 @@ impl Vao {
     }
 }
 
+impl Default for Vao {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Drop for Vao {
     fn drop(&mut self) {
         unsafe { gl::DeleteVertexArrays(1, ptr::addr_of!(self.0)) }

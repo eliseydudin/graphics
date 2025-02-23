@@ -1,4 +1,8 @@
-use std::{ffi::c_void, mem::MaybeUninit, ptr};
+use std::{
+    ffi::c_void,
+    mem::{self, MaybeUninit},
+    ptr,
+};
 
 use super::Vao;
 
@@ -55,7 +59,7 @@ impl Vbo {
             gl::BindBuffer(draw_target as u32, self.0);
             gl::BufferData(
                 gl::ARRAY_BUFFER,
-                (data.len() * size_of::<T>()) as isize,
+                (mem::size_of_val(data)) as isize,
                 data.as_ptr() as *const c_void,
                 draw_type as u32,
             )

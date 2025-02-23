@@ -24,13 +24,6 @@ impl ops::BitOr for ClearFlags {
     }
 }
 
-impl Into<u32> for ClearFlags {
-    #[inline]
-    fn into(self) -> u32 {
-        self.0
-    }
-}
-
 pub struct DrawLayer {
     vao_bound: Cell<bool>,
 }
@@ -47,7 +40,7 @@ impl DrawLayer {
     }
 
     pub fn clear(&self, flags: ClearFlags) {
-        unsafe { gl::Clear(flags.into()) }
+        unsafe { gl::Clear(flags.0) }
     }
 
     pub fn set_clear_color(&self, color: Color) {
