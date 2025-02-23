@@ -83,7 +83,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
 
-        draw_layer.clear(ClearFlags::Color);
+        draw_layer.clear(ClearFlags::COLOR);
         draw_layer.draw_arrays(DrawMode::Triangles, 0, 3);
 
         window.gl_swap_window();
