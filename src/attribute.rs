@@ -9,11 +9,13 @@ pub enum AttributeType {
     i8 = gl::BYTE,
     u8 = gl::UNSIGNED_BYTE,
     i16 = gl::SHORT,
+    u16 = gl::UNSIGNED_SHORT,
     f32 = gl::FLOAT,
     f16 = gl::HALF_FLOAT,
     f64 = gl::DOUBLE,
-    /*Fixed = gl::FIXED,*/
-    /* TODO */
+    i32 = gl::INT,
+    u32 = gl::UNSIGNED_INT,
+    fixed = gl::FIXED,
 }
 
 pub struct Attribute(u32);
@@ -80,15 +82,6 @@ macro_rules! attributes {
         $crate::AttributeDescriptor::new(stringify!($name), $size, core::mem::size_of::<$tp>(), $crate::AttributeType::$tp)
     };
 
-    /*
-    ($name:ident: mat<$tp:ty, $size:literal>) => {
-        $crate::AttributeDescriptor::new(
-            stringify!($name),
-            $size * $size,
-            core::mem::size_of::<$tp>(),
-        )
-    };
-    */
     ($name:ident: vec<$tp:ident, $size:literal>, $($name1:ident: vec<$tp1:ident, $size1:literal>), +) => {
         $crate::Attributes::new(vec![
             attributes!($name: vec<$tp, $size>),
