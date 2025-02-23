@@ -27,6 +27,8 @@ impl ops::BitOr for ClearFlags {
 pub struct DrawLayer;
 
 impl DrawLayer {
+    /// Initialize OpenGL and create a [`DrawLayer`].
+    /// `loader` is the function which will be used to initialize OpenGL.
     pub unsafe fn new<T, F>(mut loader: F) -> Self
     where
         F: FnMut(&'static str) -> *const T,
@@ -35,18 +37,22 @@ impl DrawLayer {
         Self
     }
 
+    /// Clears the screen.
     pub fn clear(&self, flags: ClearFlags) {
         unsafe { gl::Clear(flags.0) }
     }
 
+    /// Set the color which will be used when [`Self::clear`] is called
     pub fn set_clear_color(&self, color: Color) {
         unsafe { gl::ClearColor(color.r, color.g, color.b, color.a) }
     }
 
+    /// Use a shader program
     pub fn use_program(&self, program: &Program) {
         unsafe { program.use_internal() }
     }
 
+    /// Draw the information behind [`Vao`] to the screen
     pub fn draw_arrays(&self, vao: &Vao, mode: DrawMode, first: i32, count: i32) {
         unsafe {
             vao.bind();

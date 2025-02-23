@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
     attrs
         .calculate_for(&program)
-        .ok_or("Failed describing memory layout")?;
+        .ok_or("Failed to describe the memory layout")?;
 
     draw_layer.use_program(&program);
 
@@ -75,9 +75,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     'main_loop: loop {
         for event in event_pump.poll_iter() {
             match event {
-                Event::Quit { .. } => {
-                    break 'main_loop;
-                }
+                Event::Quit { .. } => break 'main_loop,
                 _ => (),
             }
         }
