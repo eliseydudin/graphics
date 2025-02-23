@@ -23,10 +23,11 @@ const FRAGMENT_SOURCE: &'static str = r#"
 in vec3 fragment_color;
 in vec2 texture_coords;
 uniform sampler2D tex;
+uniform float time;
 
 out vec4 color;
 void main() {
-    color = vec4(fragment_color, 1.0) * texture(tex, texture_coords);
+    color = vec4(fragment_color, 1.0) * texture(tex, texture_coords) * sin(time);
 }
 "#;
 
@@ -100,6 +101,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     draw_layer.put_uniform(&program, "tex", &active_texture);
 
     let mut event_pump = sdl.event_pump()?;
+    let timer = sdl.timer()?;
 
     'main_loop: loop {
         for event in event_pump.poll_iter() {
@@ -109,6 +111,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
 
+        let time = timer.ticks() as f32 / 150.0;
+        draw_layer.put_uniform(&program, "time", &time);
         draw_layer.clear(ClearFlags::COLOR);
         draw_layer.draw_arrays(&vao, DrawMode::Triangles, 0, 3);
 
