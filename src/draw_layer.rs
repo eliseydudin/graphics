@@ -1,4 +1,4 @@
-use crate::{Color, Program, Vao};
+use crate::{AttributeType, Color, Program, Vao};
 use std::{
     ffi::{c_void, CString},
     ops,
@@ -60,6 +60,21 @@ impl DrawLayer {
         unsafe {
             vao.bind();
             gl::DrawArrays(mode as u32, first, count)
+        }
+    }
+
+    /// Draw the data behind [`Vao`] with indicies data provided by a given [`Ebo`]
+    pub fn draw_elements(
+        &self,
+        vao: &Vao,
+        mode: DrawMode,
+        count: i32,
+        type_: AttributeType,
+        indicies: usize,
+    ) {
+        unsafe {
+            vao.bind();
+            gl::DrawElements(mode as u32, count, type_ as u32, indicies as *const c_void)
         }
     }
 
