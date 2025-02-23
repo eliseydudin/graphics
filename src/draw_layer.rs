@@ -48,7 +48,9 @@ impl DrawLayer {
     }
 
     pub fn draw_arrays(&self, vao: &Vao, mode: DrawMode, first: i32, count: i32) {
-        unsafe { vao.bind() }
-        unsafe { gl::DrawArrays(mode as u32, first, count) }
+        unsafe {
+            vao.bind();
+            gl::DrawArrays(mode as u32, first, count)
+        }
     }
 }
