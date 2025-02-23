@@ -13,7 +13,7 @@ void main() {
 "#;
 
 const FRAGMENT_SOURCE: &'static str = r#"
-#version 410 core
+#version 330 core
 in vec3 fragment_color;
 out vec4 color;
 void main() {
