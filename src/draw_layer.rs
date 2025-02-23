@@ -62,6 +62,16 @@ impl DrawLayer {
             gl::DrawArrays(mode as u32, first, count)
         }
     }
+
+    pub fn resize_to(&self, mut width: i32, mut height: i32) {
+        #[cfg(target_os = "macos")]
+        {
+            width *= 2;
+            height *= 2;
+        }
+
+        unsafe { gl::Viewport(0, 0, width, height) }
+    }
 }
 
 pub trait UniformResource {
