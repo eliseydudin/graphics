@@ -1,5 +1,5 @@
 use crate::{Color, Program, Vao};
-use std::{cell::Cell, ffi::c_void, ops};
+use std::{ffi::c_void, ops};
 
 #[repr(u32)]
 pub enum DrawMode {
@@ -24,9 +24,7 @@ impl ops::BitOr for ClearFlags {
     }
 }
 
-pub struct DrawLayer {
-    vao_bound: Cell<bool>,
-}
+pub struct DrawLayer;
 
 impl DrawLayer {
     pub unsafe fn new<F>(mut loader: F) -> Self
@@ -34,9 +32,7 @@ impl DrawLayer {
         F: FnMut(&'static str) -> *const (),
     {
         gl::load_with(|s| loader(s) as *const c_void);
-        Self {
-            vao_bound: Cell::new(false),
-        }
+        Self
     }
 
     pub fn clear(&self, flags: ClearFlags) {
@@ -51,13 +47,8 @@ impl DrawLayer {
         unsafe { program.use_internal() }
     }
 
-    pub fn draw_arrays(&self, mode: DrawMode, first: i32, count: i32) {
-        assert!(self.vao_bound.get());
+    pub fn draw_arrays(&self, vao: &Vao, mode: DrawMode, first: i32, count: i32) {
+        unsafe { vao.bind() }
         unsafe { gl::DrawArrays(mode as u32, first, count) }
-    }
-
-    pub fn bind(&self, vao: &Vao) {
-        unsafe { vao.bind() };
-        self.vao_bound.set(true);
     }
 }

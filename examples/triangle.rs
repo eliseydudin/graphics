@@ -69,7 +69,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .ok_or("Failed describing memory layout")?;
 
     draw_layer.use_program(&program);
-    draw_layer.bind(&vao);
 
     let mut event_pump = sdl.event_pump()?;
 
@@ -84,7 +83,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         draw_layer.clear(ClearFlags::COLOR);
-        draw_layer.draw_arrays(DrawMode::Triangles, 0, 3);
+        draw_layer.draw_arrays(&vao, DrawMode::Triangles, 0, 3);
 
         window.gl_swap_window();
     }
