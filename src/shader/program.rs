@@ -68,6 +68,10 @@ impl Program {
         let attribute_id = unsafe { gl::GetAttribLocation(self.0, cstr) };
         Some(attribute_id)
     }
+
+    pub(crate) fn get_inner(&self) -> u32 {
+        self.0
+    }
 }
 
 impl Program {

@@ -79,15 +79,21 @@ impl AttributeDescriptor {
 #[macro_export]
 macro_rules! attributes {
     ($name:ident: vec<$tp:ident, $size:literal>) => {
-        $crate::AttributeDescriptor::new(stringify!($name), $size, core::mem::size_of::<$tp>(), $crate::AttributeType::$tp)
+        $crate::AttributeDescriptor::new(
+            stringify!($name),
+            $size,
+            core::mem::size_of::<$tp>(),
+            $crate::AttributeType::$tp,
+        )
     };
 
     ($name:ident: vec<$tp:ident, $size:literal>, $($name1:ident: vec<$tp1:ident, $size1:literal>), +) => {
-        $crate::Attributes::new(vec![
-            attributes!($name: vec<$tp, $size>),
-            attributes!($($name1: vec<$tp1, $size1>), +)
-        ])
-
+        {
+            let mut descriptors = Vec::new();
+            descriptors.push(attributes!($name: vec<$tp, $size>));
+            $(descriptors.push(attributes!($name1: vec<$tp1, $size1>));)+
+            $crate::Attributes::new(descriptors)
+        }
     };
 }
 

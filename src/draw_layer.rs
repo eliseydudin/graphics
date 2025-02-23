@@ -1,5 +1,8 @@
 use crate::{Color, Program, Vao};
-use std::{ffi::c_void, ops};
+use std::{
+    ffi::{c_void, CString},
+    ops,
+};
 
 #[repr(u32)]
 pub enum DrawMode {
@@ -58,5 +61,30 @@ impl DrawLayer {
             vao.bind();
             gl::DrawArrays(mode as u32, first, count)
         }
+    }
+}
+
+pub trait UniformResource {
+    unsafe fn uniform(&self, location: i32);
+}
+
+impl DrawLayer {
+    /// Returns [`None`] when `location` is an invalid string
+    /// or if location isn't a uniform inside the shader.
+    pub fn put_uniform<R>(&self, program: &Program, location: &str, uniform: &R) -> Option<()>
+    where
+        R: UniformResource,
+    {
+        let cstr = CString::new(location).ok()?;
+        let cstr = cstr.as_ptr();
+
+        let id = unsafe { gl::GetUniformLocation(program.get_inner(), cstr) };
+        if id == -1 {
+            return None;
+        }
+
+        unsafe { uniform.uniform(id) };
+
+        Some(())
     }
 }
