@@ -19,11 +19,11 @@ impl ClearFlags {
 }
 
 impl ops::BitOr for ClearFlags {
-    type Output = u32;
+    type Output = Self;
 
     #[inline]
     fn bitor(self, rhs: Self) -> Self::Output {
-        self.0 | rhs.0
+        Self(self.0 | rhs.0)
     }
 }
 
@@ -78,14 +78,23 @@ impl DrawLayer {
         }
     }
 
-    pub fn resize_to(&self, mut width: i32, mut height: i32) {
+    pub fn resize_to(&self, width: i32, height: i32) {
         #[cfg(target_os = "macos")]
-        {
-            width *= 2;
-            height *= 2;
+        unsafe {
+            gl::Viewport(0, 0, width * 2, height * 2)
         }
 
-        unsafe { gl::Viewport(0, 0, width, height) }
+        #[cfg(not(target_os = "macos"))]
+        unsafe {
+            gl::Viewport(0, 0, width, height)
+        }
+    }
+
+    pub fn enable_depth_testing(&self) {
+        unsafe {
+            gl::Enable(gl::DEPTH_TEST);
+            gl::DepthFunc(gl::LESS)
+        }
     }
 }
 
