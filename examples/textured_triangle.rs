@@ -85,7 +85,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     draw_layer.use_program(&program);
 
-    let image = ImageReader::open("triangle.jpeg")?
+    let image = ImageReader::open("assets/triangle.jpeg")?
         .decode()?
         .flipv()
         .to_rgba8();
