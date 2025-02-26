@@ -96,6 +96,10 @@ impl DrawLayer {
             gl::DepthFunc(gl::LESS)
         }
     }
+
+    pub fn get_gl_error(&self) -> u32 {
+        unsafe { gl::GetError() }
+    }
 }
 
 pub trait UniformResource {
@@ -113,6 +117,13 @@ impl UniformResource for f32 {
     #[inline]
     unsafe fn uniform(&self, location: i32) {
         gl::Uniform1f(location, *self)
+    }
+}
+
+// mat4x4
+impl UniformResource for [f32; 16] {
+    unsafe fn uniform(&self, location: i32) {
+        gl::UniformMatrix4fv(location, 1, gl::FALSE, self.as_ptr())
     }
 }
 

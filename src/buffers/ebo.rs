@@ -20,12 +20,16 @@ impl Ebo {
         unsafe {
             gl::BindBuffer(draw_target as u32, self.0);
             gl::BufferData(
-                gl::ARRAY_BUFFER,
+                gl::ELEMENT_ARRAY_BUFFER,
                 (mem::size_of_val(data)) as isize,
                 data.as_ptr() as *const ffi::c_void,
                 draw_type as u32,
             )
         }
+    }
+
+    pub fn bind(&self) {
+        unsafe { gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, self.0) }
     }
 }
 
